@@ -4,71 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Know Well | Elite Finance</title>
-    <!-- The Magic Line (Keep this on ONE line) -->
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.cdnfonts.com/css/inter" rel="stylesheet">
     <style>
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+        body { background-color: #020617; color: #e2e8f0; font-family: sans-serif; margin: 0; padding-bottom: 120px; overflow-x: hidden; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 25px; border-bottom: 1px solid #1e293b; background: #020617; sticky: top; z-index: 40; }
+        .logo { font-weight: 900; font-size: 22px; color: white; letter-spacing: -1px; }
+        .gold { color: #fbbf24; }
+        .container { padding: 20px; }
+        
+        /* News Cards */
+        .card { background: #0f172a; border-radius: 25px; border: 1px solid #334155; overflow: hidden; margin-bottom: 25px; cursor: pointer; }
+        .img-box { width: 100%; height: 200px; object-fit: cover; background: #1e293b; border-bottom: 1px solid #334155; }
+        .card-content { padding: 20px; }
+        .label { color: #fbbf24; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+        h2 { color: white; margin: 5px 0; font-size: 20px; line-height: 1.3; }
+        p { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+
+        /* Reader View */
+        #reader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020617; z-index: 1000; display: none; overflow-y: auto; }
+        .reader-header { padding: 20px; position: sticky; top: 0; background: rgba(2, 6, 23, 0.95); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #1e293b; }
+        .back-btn { background: #fbbf24; color: black; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 900; font-size: 12px; }
+        .reader-body { padding: 25px; padding-bottom: 150px; }
+        .reader-img { width: 100%; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .btn-unlock { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #fbbf24; color: black; border: none; padding: 20px; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; z-index: 50; }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200">
-  
-  
-    <!-- Premium Navbar -->
-<h1 class="text-xl font-black text-white">KNOW <span class="text-amber-400">WELL</span></h1>
-        <h1 class="text-xl font-black tracking-tighter text-white">KNOW<span class="text-amber-400">WELL</span></h1>
-        <div class="flex items-center gap-3">
-            <span id="save-count" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded-md border border-slate-700">SAVED: 0</span>
-            <button onclick="toggleModal()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-4 py-2 rounded-full transition">PRO ACCESS</button>
-        </div>
+<body>
+
+    <nav>
+        <div class="logo">KNOW <span class="gold">WELL</span></div>
+        <div style="font-size: 10px; background: #fbbf24; color: black; padding: 5px 10px; border-radius: 5px; font-weight: 900;">LIVE</div>
     </nav>
 
-    <!-- Hero Spotlight -->
-    <section class="p-6">
-        <div class="relative overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2rem] p-8 border border-slate-700 shadow-2xl">
-            <div class="absolute top-0 right-0 p-4 opacity-10">
-                <svg width="100" height="100" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
-            </div>
-            <span class="text-amber-400 text-[10px] font-bold uppercase tracking-[0.2em]">Live Market Alert</span>
-            <h2 class="text-3xl mt-2 leading-tight text-white">Global Equity Markets Reach Historic $120T Valuation.</h2>
-            <p class="mt-4 text-slate-400 text-sm leading-relaxed">The surge continues as AI-driven productivity gains redefine corporate earnings expectations for Q4.</p>
-            <button onclick="saveArticle('Global Markets')" class="mt-6 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition">Save Intel</button>
+    <div class="container" id="main-feed">
+        <!-- Cards will be generated here by Javascript for Zero Error consistency -->
+    </div>
+
+    <!-- Reader Modal -->
+    <div id="reader">
+        <div class="reader-header">
+            <button class="back-btn" onclick="closeNews()">← BACK</button>
+            <span style="font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Full Intel Report</span>
         </div>
-    </section>
-
-    <!-- News Grid -->
-    <section class="px-6 space-y-6">
-        <h3 class="text-slate-500 text-xs uppercase tracking-widest font-bold">Latest Intelligence</h3>
-
-        <!-- Card 1 -->
-        <div class="group bg-slate-900/50 rounded-2xl border border-slate-800 p-4 hover:border-amber-500/50 transition">
-            <img src="https://images.unsplash.com/photo-1611974714024-4607a55d46ed?w=400" class="w-full h-40 object-cover rounded-xl grayscale group-hover:grayscale-0 transition duration-500">
-            <div class="mt-4">
-                <span class="text-amber-500 text-[10px] font-bold uppercase">Digital Assets</span>
-                <h4 class="text-lg font-bold text-white mt-1 leading-snug">The Institutional Adoption of Crypto: What's Next?</h4>
-                <button onclick="saveArticle('Crypto Intel')" class="mt-3 text-slate-500 text-xs flex items-center gap-2 hover:text-amber-400 transition">
-                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                   Bookmark Report
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Premium Modal -->
-    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
-        <div class="bg-slate-900 border border-slate-700 rounded-[2.5rem] p-10 w-full max-w-sm text-center shadow-2xl">
-            <div class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span class="text-amber-500 text-2xl font-bold">KW</span>
-            </div>
-            <h2 class="text-2xl font-bold text-white mb-2">Expert Membership</h2>
-            <p class="text-slate-400 text-sm mb-8">Join 50,000+ investors receiving daily premium briefings.</p>
-            <input type="email" placeholder="Institutional Email" class="w-full mb-4 p-4 bg-slate-800 rounded-2xl border border-slate-700 outline-none text-white focus:border-amber-500 transition text-sm">
-            <button class="w-full bg-amber-500 hover:bg-amber-400 text-black font-black py-4 rounded-2xl shadow-lg shadow-amber-500/20 transition">UNLOCK ACCESS</button>
-            <button onclick="toggleModal()" class="mt-6 text-slate-500 text-xs uppercase tracking-widest font-bold">Dismiss</button>
+        <div class="reader-body">
+            <img id="view-img" src="" class="reader-img">
+            <div id="view-label" class="label"></div>
+            <h1 id="view-title" style="color: white; font-size: 26px; line-height: 1.2; margin-bottom: 20px;"></h1>
+            <div id="view-text" style="line-height: 1.8; color: #cbd5e1; font-size: 16px;"></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <button class="btn-unlock">Unlock Full Terminal Access</button>
+
+    <script>
+        const newsData = [
+            {
+                id: 'n1',
+                label: `Market Intelligence`,
+                title: `Global Equity Markets Reach Historic $120T Valuation`,
+                img: `https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&w=800`,
+                summary: `Full breakdown of the AI-driven capital surge and what it means for Q4...`,
+                text: `The global financial landscape has shifted dramatically as total equity market capitalization surpassed the $120 trillion threshold. This sequence began with a massive injection of liquidity following cooling inflation data, allowing institutional investors to re-enter high-growth sectors. The primary driver remains the AI Productivity Cycle, where hardware manufacturers and software giants are showing unprecedented quarterly revenue growth. As we move into the final quarter, the focus is transitioning from mere speculation to actual earnings performance. Analysts warn that while the $120T mark is a victory, the market is now heavily concentrated. Investors should watch for a potential rotation into small-cap stocks if interest rate cuts are confirmed. For now, the momentum remains firmly bullish, supported by strong retail participation.`
+            },
+            {
+                id: 'n2',
+                label: `Digital Assets`,
+                title: `Institutional Crypto Adoption: The 2024 Outlook`,
+                img: `https://images.pexels.com/photos/844124/pexels-photo-844124.jpeg?auto=compress&cs=tinysrgb&w=800`,
+                summary: `How the world's largest banks are pivoting to blockchain infrastructure...`,
+                text: `The sequence of institutional crypto adoption has reached a critical tipping point. What started as a speculative asset class has now been legitimized by the approval of spot ETFs by the world’s largest asset managers, including BlackRock and Fidelity. This transition is not just about price action; it is about the Tokenization of Real-World Assets (RWA). Major banking institutions are now testing private blockchain layers to settle cross-border transactions in seconds rather than days, potentially saving billions in annual fees. Looking forward, the next phase involves the integration of decentralized finance (DeFi) protocols into traditional brokerage accounts. Expect high volatility as the market adjusts to this new scale of liquidity.`
+            },
+            {
+                id: 'n3',
+                label: `Tech Analysis`,
+                title: `Semiconductor Wars: The Battle for AI Supremacy`,
+                img: `https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=800`,
+                summary: `Supply chain shifts and the impact on global technology stock indexes...`,
+                text: `The global chip shortage has evolved into a strategic battle for AI supremacy. This sequence is led by NVIDIA and TSMC, who control the manufacturing pipeline for high-end GPUs. As nations race to secure domestic chip production, we are seeing a massive shift in capital toward "Foundry" stocks in the US and Europe. This geopolitical movement is decoupling technology dependencies from traditional hubs. For investors, this means a shift in valuation models—companies with secure supply chains are now trading at a premium compared to those reliant on single-source manufacturing. The next 12 months will decide which firms emerge as the new infrastructure backbone of the digital economy.`
+            },
+            {
+                id: 'n4',
+                label: `Commodities`,
+                title: `Gold Hits Record Highs Amid Global Currency Shifts`,
+                img: `https://images.pexels.com/photos/47047/gold-ingots-golden-treasure-47047.jpeg?auto=compress&cs=tinysrgb&w=800`,
+                summary: `Central banks increase reserves as traditional fiat hedges weaken...`,
+                text: `Gold has maintained its historic rally as central banks around the world accelerate their gold purchases. This sequence is driven by a desire to diversify reserves away from the US Dollar amid shifting geopolitical alliances. Historically, gold serves as the ultimate hedge against inflation, but current price action suggests it is also being used as a "safety play" against systemic banking risks. As the BRICS nations discuss alternative payment systems, the intrinsic value of physical commodities is being re-evaluated by institutional wealth managers. We expect continued upward pressure on gold prices as long as currency volatility remains high. Traders should look for $2,800 as the next major psychological resistance level.`
+            },
+            {
+                id: 'n5',
+                label: `Energy Sector`,
+                title: `The Green Energy Pivot: Nuclear Power Returns`,
+                img: `https://images.pexels.com/photos/235721/pexels-photo-235721.jpeg?auto=compress&cs=tinysrgb&w=800`,
+                summary: `Big Tech invests billions in Small Modular Reactors for Data Centers...`,
+                text: `A surprising sequence in the energy sector has emerged: the return of Nuclear Power. Major tech companies, including Microsoft and Amazon, are signing massive deals to restart nuclear reactors or build Small Modular Reactors (SMRs). The reasoning is simple—AI data centers require immense, carbon-free, 24/7 power that wind and solar cannot yet provide. This has triggered a massive bull run in Uranium miners and nuclear engineering firms. This "Energy Realism" phase is redefining ESG investing, as nuclear is now being viewed as a necessary bridge to a green future. Investors in the energy sector should move their focus from traditional oil to the uranium and grid-infrastructure companies powering the AI revolution.`
+            }
+        ];
+
+        const container = document.getElementById('main-feed');
+        newsData.forEach(news => {
+            container.innerHTML += `
+                <div class="card" onclick="openNews('${news.id}')">
+                    <img src="${news.img}" class="img-box">
+                    <div class="card-content">
+                        <div class="label">${news.label}</div>
+                        <h2>${news.title}</h2>
+                        <p>${news.summary}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        function openNews(id) {
+            const data = newsData.find(n => n.id === id);
+            document.getElementById('view-img').src = data.img;
+            document.getElementById('view-title').innerText = data.title;
+            document.getElementById('view-label').innerText = data.label;
+            document.getElementById('view-text').innerText = data.text;
+            document.getElementById('reader').style.display = 'block';
+            document.getElementById('reader').scrollTo(0, 0);
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeNews() {
+            document.getElementById('reader').style.display = 'none';
+            document.body.style.overflow = 'auto'; 
+        }
+    </script>
