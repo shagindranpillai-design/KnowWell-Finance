@@ -178,37 +178,53 @@
 <script>
 const API_KEY = 'c8ac42113d6f416d99b7f308cb8c6b61';
 
-// 1. LIVE NEWS ENGINE
+// Global API Key for GNews
+const G_API_KEY = '0995e810a2585de71f8bfeaa13fbeef3'; 
+
 async function fetchLiveNews() {
     try {
-        const proxyUrl = "https://api.allorigins.win/get?url=";
-        const targetUrl = `https://newsapi.org/v2/everything?q=(finance OR stocks OR crypto OR economy)&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`;
+        // Updated URL for GNews - Works on both Phone and GitHub
+        const url = `https://gnews.io/api/v4/search?q=finance OR stocks OR crypto OR economy&lang=en&max=15&apikey=${G_API_KEY}`;
         
-        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-        const result = await response.json();
-        const data = JSON.parse(result.contents); 
-        const articles = data.articles;
-
+        const response = await fetch(url);
+        const data = await response.json();
+        
         const container = document.getElementById('main-feed');
-        if(!container || !articles) return;
+        if(!container || !data.articles) return;
         container.innerHTML = ''; 
 
-        articles.forEach(article => {
-            if(!article.title || article.title === '[Removed]') return;
+        data.articles.forEach(article => {
             const card = document.createElement('div');
             card.className = 'card';
-            const newsImg = article.urlToImage || 'https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&w=800';
-            card.innerHTML = `<img src="${newsImg}" class="img-box"><div class="card-content"><div class="label">${article.source.name}</div><h2>${article.title}</h2><p>${article.description || ''}</p></div>`;
+            // GNews uses 'image'
+            const newsImg = article.image || 'https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&w=800';
+            
+            card.innerHTML = `
+                <img src="${newsImg}" class="img-box">
+                <div class="card-content">
+                    <div class="label">${article.source.name}</div>
+                    <h2>${article.title}</h2>
+                    <p>${article.description || 'Accessing encrypted source...'}</p>
+                </div>
+            `;
+            
             card.onclick = () => {
                 document.getElementById('view-img').src = newsImg;
                 document.getElementById('view-title').innerText = article.title;
                 document.getElementById('view-label').innerText = article.source.name;
-                document.getElementById('view-text').innerHTML = `<p>${article.description || ''}</p><br><a href="${article.url}" target="_blank" style="color:#fbbf24;">READ FULL SOURCE →</a>`;
+                document.getElementById('view-text').innerHTML = `
+                    <p>${article.description || ''}</p>
+                    <p>${article.content || ''}</p>
+                    <br>
+                    <a href="${article.url}" target="_blank" style="color:#fbbf24; text-decoration:none; font-weight:bold;">READ FULL INTEL →</a>
+                `;
                 document.getElementById('reader').style.display = 'block';
             };
             container.appendChild(card);
         });
-    } catch (e) { console.log("Proxy failed", e); }
+    } catch (e) { 
+        console.log("Terminal Error: GNews feed failed", e); 
+    }
 }
 
 // 2. TERMINAL LOGIN SYSTEM (Google & Code)
@@ -257,8 +273,10 @@ setInterval(updateLivePrices, 3000);
 window.onload = () => {
     fetchLiveNews();
     updateLivePrices();
+    
     if (localStorage.getItem('user_logged_in') === 'true') {
-        const btn = document.querySelector('.btn-unlock');
+        if(document.getElementById('logout-btn')) document.getElementById('logout-btn').style.display = 'block';
+        const btn = document.getElementById('main-unlock-btn');
         if(btn) {
             btn.style.backgroundColor = "#22c55e";
             btn.style.color = "white";
@@ -267,6 +285,7 @@ window.onload = () => {
         }
     }
 };
+
 </script>
 </body>
 </html>
