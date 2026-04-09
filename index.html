@@ -175,280 +175,91 @@
 
     <button class="btn-unlock" onclick="openAuth()">Unlock Full Terminal Access</button>
 
-    <script>
-        // ... (Same newsData array as before) ...
-        const newsData = [
-            { id: 'n1', label: `Market Intelligence`, title: `Global Equity Markets Reach Historic $120T Valuation`, img: `https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Full breakdown of the AI-driven capital surge...`, text: `The global financial landscape has shifted...` },
-            { id: 'n2', label: `Digital Assets`, title: `Institutional Crypto Adoption: The 2024 Outlook`, img: `https://images.pexels.com/photos/844124/pexels-photo-844124.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `How the world's largest banks are pivoting...`, text: `The sequence of institutional crypto adoption...` },
-            { id: 'n3', label: `Tech Analysis`, title: `Semiconductor Wars: The Battle for AI Supremacy`, img: `https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Supply chain shifts and the impact on global...`, text: `The global chip shortage has evolved...` },
-            { id: 'n4', label: `Commodities`, title: `Gold Hits Record Highs Amid Global Currency Shifts`, img: `https://images.pexels.com/photos/47047/gold-ingots-golden-treasure-47047.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Central banks increase reserves...`, text: `Gold has maintained its historic rally...` },
-            { id: 'n5', label: `Energy Sector`, title: `The Green Energy Pivot: Nuclear Power Returns`, img: `https://images.pexels.com/photos/235721/pexels-photo-235721.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Big Tech invests billions in SMRs...`, text: `A surprising sequence in the energy sector...` }
-        ];
+<script>
+const API_KEY = 'c8ac42113d6f416d99b7f308cb8c6b61';
 
+// 1. LIVE NEWS ENGINE
+async function fetchLiveNews() {
+    try {
+        const response = await fetch(`https://newsapi.org/v2/everything?q=(finance OR stocks OR crypto OR economy)&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`);
+        const data = await response.json();
         const container = document.getElementById('main-feed');
-        newsData.forEach(news => {
-            container.innerHTML += `
-                <div class="card" onclick="openNews('${news.id}')">
-                    <img src="${news.img}" class="img-box">
-                    <div class="card-content">
-                        <div class="label">${news.label}</div>
-                        <h2>${news.title}</h2>
-                        <p>${news.summary}</p>
-                    </div>
-                </div>
-            `;
+        if(!container || !data.articles) return;
+        container.innerHTML = ''; 
+        data.articles.forEach(article => {
+            if(!article.title || article.title === '[Removed]') return;
+            const card = document.createElement('div');
+            card.className = 'card';
+            const newsImg = article.urlToImage || 'https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&w=800';
+            card.innerHTML = `<img src="${newsImg}" class="img-box"><div class="card-content"><div class="label">${article.source.name}</div><h2>${article.title}</h2><p>${article.description || ''}</p></div>`;
+            card.onclick = () => {
+                document.getElementById('view-img').src = newsImg;
+                document.getElementById('view-title').innerText = article.title;
+                document.getElementById('view-label').innerText = article.source.name;
+                document.getElementById('view-text').innerHTML = `<p>${article.description || ''}</p><br><a href="${article.url}" target="_blank" style="color:#fbbf24;">READ FULL SOURCE →</a>`;
+                document.getElementById('reader').style.display = 'block';
+            };
+            container.appendChild(card);
         });
-
-        // Functions for Reader
-        function openNews(id) {
-            const data = newsData.find(n => n.id === id);
-            document.getElementById('view-img').src = data.img;
-            document.getElementById('view-img').style.display = 'block'; // Reset preview toggle
-            document.getElementById('view-title').innerText = data.title;
-            document.getElementById('view-label').innerText = data.label;
-            document.getElementById('view-text').innerText = data.text;
-            document.getElementById('reader').style.display = 'block';
-            document.body.style.overflow = 'hidden'; 
-        }
-
-        function closeNews() {
-            document.getElementById('reader').style.display = 'none';
-            document.body.style.overflow = 'auto'; 
-        }
-
-        // New Action Functions
-        function handleShare() {
-            const title = document.getElementById('view-title').innerText;
-            if (navigator.share) {
-                navigator.share({ title: title, url: window.location.href });
-            } else {
-                alert("Link copied to clipboard!");
-            }
-        }
-
-        function togglePreview() {
-            const img = document.getElementById('view-img');
-            img.style.display = (img.style.display === 'none') ? 'block' : 'none';
-        }
-
-        function toggleWatchlist() {
-            alert("Added to your Private Watchlist!");
-        }
-
-        // Auth Modal Functions
-        function openAuth() { document.getElementById('auth-modal').style.display = 'flex'; }
-function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
-
-async function updateLivePrices() {
-    // These match your photo exactly
-    const liveGold = (4716.11 + (Math.random() * 0.05)).toFixed(2);
-    const liveSilver = (74.18 + (Math.random() * 0.01)).toFixed(2);
-
-    if(document.getElementById('price-gold')) document.getElementById('price-gold').innerText = "$" + liveGold;
-    if(document.getElementById('price-gold2')) document.getElementById('price-gold2').innerText = "$" + liveGold;
-    if(document.getElementById('price-silver')) document.getElementById('price-silver').innerText = "$" + liveSilver;
-    if(document.getElementById('price-silver2')) document.getElementById('price-silver2').innerText = "$" + liveSilver;
+    } catch (e) { console.log("News Error"); }
 }
 
-updateLivePrices();
-setInterval(updateLivePrices, 3000);
-
-// --- NEW AUTH LOGIC START ---
-let isCreatingAccount = false;
-
-function toggleAuthMode() {
-    isCreatingAccount = !isCreatingAccount;
-    const title = document.getElementById('auth-title');
-    const btn = document.getElementById('auth-submit-btn');
-    if (isCreatingAccount) {
-        title.innerText = "CREATE ELITE ID";
-        btn.innerText = "Request Access Code";
-    } else {
-        title.innerText = "TERMINAL LOGIN";
-        btn.innerText = "Authenticate";
+// 2. TERMINAL LOGIN SYSTEM (Google & Code)
+function handleGoogleLogin() {
+    let email = prompt("SIGN IN WITH GOOGLE", "user@gmail.com");
+    if (email) {
+        localStorage.setItem('user_logged_in', 'true');
+        alert("ACCESS GRANTED: Welcome " + email);
+        location.reload();
     }
 }
 
 function handleInitialAuth() {
-    // Moves from Email screen to Code screen
     document.getElementById('auth-step-1').style.display = 'none';
     document.getElementById('auth-step-2').style.display = 'block';
 }
 
 function verifyIdentity() {
     const code = document.getElementById('otp-input').value;
-    
     if (code === "1234") {
-        // 1. First, find the button at the very bottom of the page
-        // We look for the one that is NOT inside the modal
-        const buttons = document.querySelectorAll('.btn-unlock');
-        let mainBtn = null;
-        
-        buttons.forEach(btn => {
-            if (btn.innerText.includes("UNLOCK FULL")) {
-                mainBtn = btn;
-            }
-        });
-
-        // 2. Force the color change BEFORE the alert
-        if (mainBtn) {
-            mainBtn.style.backgroundColor = "#22c55e"; // Green
-            mainBtn.style.color = "white";
-            mainBtn.innerText = "TERMINAL ACTIVE: ELITE MEMBER";
-            // Disable the old login popup once active
-            mainBtn.onclick = function() { alert("Private Terminal Access Active."); };
-        }
-
-        // 3. Save the state so it stays green even if you refresh
         localStorage.setItem('user_logged_in', 'true');
-
-        // 4. Show the success message
-        alert("IDENTITY VERIFIED. Welcome to Know Well Elite.");
-
-        // 5. Close the modal
-        closeAuth();
+        alert("IDENTITY VERIFIED. Welcome Elite Member.");
+        location.reload();
     } else {
-        alert("ACCESS DENIED: Invalid Verification Code.");
+        alert("ACCESS DENIED: Invalid Code.");
     }
 }
 
-// Check if user is already logged in when they open the app
-window.onload = function() {
-    updateLivePrices(); // Keep your gold/silver prices moving
-    
-    // Auto-check if user already verified before
-    if (localStorage.getItem('user_logged_in') === 'true') {
-        const buttons = document.querySelectorAll('.btn-unlock');
-        buttons.forEach(btn => {
-            if (btn.innerText.includes("UNLOCK FULL") || btn.innerText.includes("TERMINAL ACTIVE")) {
-                btn.style.backgroundColor = "#22c55e";
-                btn.style.color = "white";
-                btn.innerText = "TERMINAL ACTIVE: ELITE MEMBER";
-            }
-        });
-    }
-};
-
-// --- NEW AUTH LOGIC END ---
-function handleGoogleLogin() {
-    let email = prompt("SIGN IN WITH GOOGLE", "user@gmail.com");
-    if (email) {
-        localStorage.setItem('user_logged_in', 'true');
-        alert("ACCESS GRANTED: Welcome " + email);
-        location.reload(); // This triggers the Green Button
-    }
-}
-
-</script>
-</body>
-</html>
-
-            <div id="view-label" class="label"></div>
-            <h1 id="view-title" style="color: white; font-size: 26px; line-height: 1.2; margin-bottom: 20px;"></h1>
-            <div id="view-text" style="line-height: 1.8; color: #cbd5e1; font-size: 16px; padding-bottom: 100px;"></div>
-        </div>
-    </div>
-
-    <!-- Sign In & Sign Up Modal -->
-    <div id="auth-modal">
-        <div class="auth-card">
-            <h2 class="gold" id="auth-title">TERMINAL LOGIN</h2>
-            <p id="auth-subtitle" style="margin-bottom: 20px; font-size: 13px; color: #94a3b8;">Enter your credentials to access elite data.</p>
-            
-            <input type="text" class="auth-input" placeholder="Username / Email">
-            <input type="password" class="auth-input" placeholder="Secure Token">
-            
-            <button id="auth-submit-btn" class="btn-unlock" style="position: static; width: 100%; margin-top: 10px;" onclick="closeAuth()">Authenticate</button>
-            
-            <p style="font-size: 12px; margin-top: 20px; color: #94a3b8;">
-                Don't have an account? <span class="gold" style="cursor: pointer; font-weight: bold;" onclick="toggleAuthMode()">Sign Up</span>
-            </p>
-            
-            <p style="font-size: 11px; margin-top: 15px; color: #64748b; cursor: pointer;" onclick="closeAuth()">[ Cancel ]</p>
-        </div>
-    </div>
-
-
-    <button class="btn-unlock" onclick="openAuth()">Unlock Full Terminal Access</button>
-
-    <script>
-        // ... (Same newsData array as before) ...
-        const newsData = [
-            { id: 'n1', label: `Market Intelligence`, title: `Global Equity Markets Reach Historic $120T Valuation`, img: `https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Full breakdown of the AI-driven capital surge...`, text: `The global financial landscape has shifted...` },
-            { id: 'n2', label: `Digital Assets`, title: `Institutional Crypto Adoption: The 2024 Outlook`, img: `https://images.pexels.com/photos/844124/pexels-photo-844124.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `How the world's largest banks are pivoting...`, text: `The sequence of institutional crypto adoption...` },
-            { id: 'n3', label: `Tech Analysis`, title: `Semiconductor Wars: The Battle for AI Supremacy`, img: `https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Supply chain shifts and the impact on global...`, text: `The global chip shortage has evolved...` },
-            { id: 'n4', label: `Commodities`, title: `Gold Hits Record Highs Amid Global Currency Shifts`, img: `https://images.pexels.com/photos/47047/gold-ingots-golden-treasure-47047.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Central banks increase reserves...`, text: `Gold has maintained its historic rally...` },
-            { id: 'n5', label: `Energy Sector`, title: `The Green Energy Pivot: Nuclear Power Returns`, img: `https://images.pexels.com/photos/235721/pexels-photo-235721.jpeg?auto=compress&cs=tinysrgb&w=800`, summary: `Big Tech invests billions in SMRs...`, text: `A surprising sequence in the energy sector...` }
-        ];
-
-        const container = document.getElementById('main-feed');
-        newsData.forEach(news => {
-            container.innerHTML += `
-                <div class="card" onclick="openNews('${news.id}')">
-                    <img src="${news.img}" class="img-box">
-                    <div class="card-content">
-                        <div class="label">${news.label}</div>
-                        <h2>${news.title}</h2>
-                        <p>${news.summary}</p>
-                    </div>
-                </div>
-            `;
-        });
-
-        // Functions for Reader
-        function openNews(id) {
-            const data = newsData.find(n => n.id === id);
-            document.getElementById('view-img').src = data.img;
-            document.getElementById('view-img').style.display = 'block'; // Reset preview toggle
-            document.getElementById('view-title').innerText = data.title;
-            document.getElementById('view-label').innerText = data.label;
-            document.getElementById('view-text').innerText = data.text;
-            document.getElementById('reader').style.display = 'block';
-            document.body.style.overflow = 'hidden'; 
-        }
-
-        function closeNews() {
-            document.getElementById('reader').style.display = 'none';
-            document.body.style.overflow = 'auto'; 
-        }
-
-        // New Action Functions
-        function handleShare() {
-            const title = document.getElementById('view-title').innerText;
-            if (navigator.share) {
-                navigator.share({ title: title, url: window.location.href });
-            } else {
-                alert("Link copied to clipboard!");
-            }
-        }
-
-        function togglePreview() {
-            const img = document.getElementById('view-img');
-            img.style.display = (img.style.display === 'none') ? 'block' : 'none';
-        }
-
-        function toggleWatchlist() {
-            alert("Added to your Private Watchlist!");
-        }
-
-        // Auth Modal Functions
-        function openAuth() { document.getElementById('auth-modal').style.display = 'flex'; }
+// 3. UI CONTROLS
+function openAuth() { document.getElementById('auth-modal').style.display = 'flex'; }
 function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
-
-async function updateLivePrices() {
-    // These match your photo exactly
-    const liveGold = (4716.11 + (Math.random() * 0.05)).toFixed(2);
-    const liveSilver = (74.18 + (Math.random() * 0.01)).toFixed(2);
-
-    if(document.getElementById('price-gold')) document.getElementById('price-gold').innerText = "$" + liveGold;
-    if(document.getElementById('price-gold2')) document.getElementById('price-gold2').innerText = "$" + liveGold;
-    if(document.getElementById('price-silver')) document.getElementById('price-silver').innerText = "$" + liveSilver;
-    if(document.getElementById('price-silver2')) document.getElementById('price-silver2').innerText = "$" + liveSilver;
+function closeNews() { document.getElementById('reader').style.display = 'none'; }
+function toggleAuthMode() { 
+    const title = document.getElementById('auth-title');
+    title.innerText = (title.innerText === "TERMINAL LOGIN") ? "CREATE ELITE ID" : "TERMINAL LOGIN";
 }
 
-updateLivePrices();
+// 4. PRICE TICKER & STARTUP
+function updateLivePrices() {
+    const gold = (4716.11 + (Math.random() * 0.05)).toFixed(2);
+    if(document.getElementById('price-gold')) document.getElementById('price-gold').innerText = "$" + gold;
+    if(document.getElementById('price-gold2')) document.getElementById('price-gold2').innerText = "$" + gold;
+}
 setInterval(updateLivePrices, 3000);
 
+window.onload = () => {
+    fetchLiveNews();
+    updateLivePrices();
+    if (localStorage.getItem('user_logged_in') === 'true') {
+        const btn = document.querySelector('.btn-unlock');
+        if(btn) {
+            btn.style.backgroundColor = "#22c55e";
+            btn.style.color = "white";
+            btn.innerText = "TERMINAL ACTIVE: ELITE MEMBER";
+            btn.onclick = () => alert("Terminal Access Active.");
+        }
+    }
+};
 </script>
 </body>
 </html>
